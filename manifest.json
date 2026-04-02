@@ -1,0 +1,22 @@
+{
+  "name": "Calculadora Nutergia",
+  "short_name": "Calc Nutergia",
+  "description": "Comparativa de rentabilidad Nutergia 2026",
+  "start_url": "/Calculadora_comercial/",
+  "scope": "/Calculadora_comercial/",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "https://fnvhub.github.io/hub/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://fnvhub.github.io/hub/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
