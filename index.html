@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Nutergia · Comparativa de Rentabilidad 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;min-height:100vh;}
+  input[type=range]{-webkit-appearance:none;appearance:none;height:12px;border-radius:6px;background:#dbeafe;outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#2563eb;cursor:pointer;box-shadow:0 2px 6px rgba(37,99,235,.4);}
+  input[type=number]{-moz-appearance:textfield;}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+  select{-webkit-appearance:none;appearance:none;}
+  .dropdown-scroll{max-height:260px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  @media print{
+    .no-print{display:none!important;}
+    body{background:white!important;}
+    .print-wrap{box-shadow:none!important;border-radius:0!important;max-width:100%!important;}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useMemo, useEffect, useRef } = React;
+
+const PRODUCTOS = [
+  {ean:"8436031732047",nombre:"ACEROL C",pres:"60 Comprimidos",pvp:18},
+  {ean:"8436031732214",nombre:"BICEBE PLUS 30",pres:"30 cápsulas",pvp:15},
+  {ean:"8436031732009",nombre:"BICEBE PLUS 90",pres:"90 cápsulas",pvp:28},
+  {ean:"8436031731095",nombre:"BILEINA 180 perlas",pres:"180 perlas",pvp:42.5},
+  {ean:"8436031731118",nombre:"BILEINA 60 perlas",pres:"60 perlas",pvp:19.5},
+  {ean:"8436031731071",nombre:"ERGY-3 180 perlas",pres:"180 perlas",pvp:41.5},
+  {ean:"8436031731088",nombre:"ERGY-3 60 perlas",pres:"60 perlas",pvp:19},
+  {ean:"8436031732221",nombre:"ERGYACTIV 30 cápsulas",pres:"30 cápsulas",pvp:21},
+  {ean:"8436031732146",nombre:"ERGYANTIOX FORTE",pres:"60 cápsulas",pvp:25},
+  {ean:"8436031733273",nombre:"ERGYBASE",pres:"60 cápsulas",pvp:20},
+  {ean:"8436031732191",nombre:"ERGY-C",pres:"125 g",pvp:28},
+  {ean:"8436031735000",nombre:"ERGYCALM",pres:"250 ml",pvp:21},
+  {ean:"8436031732283",nombre:"ERGYCARDIO Forte",pres:"90 cápsulas",pvp:30},
+  {ean:"8436031732061",nombre:"ERGYCARE",pres:"60 cápsulas",pvp:21},
+  {ean:"8436031732245",nombre:"ERGYCELL",pres:"90 cápsulas",pvp:43.5},
+  {ean:"8436031734133",nombre:"ERGYCLEAN 120 GR",pres:"120 g",pvp:16.5},
+  {ean:"8436031736298",nombre:"ERGYCOL Balance",pres:"60 cápsulas",pvp:20},
+  {ean:"8436031732153",nombre:"ERGYCOX 30 comprimidos",pres:"30 Comprimidos",pvp:16},
+  {ean:"8436031732139",nombre:"ERGYCOX",pres:"90 Comprimidos",pvp:39.5},
+  {ean:"8436031735161",nombre:"ERGYCRANBERRYL",pres:"250 ml",pvp:21},
+  {ean:"8436031732092",nombre:"ERGY-D",pres:"Bote 15 ml",pvp:15},
+  {ean:"8436031732238",nombre:"ERGY-D PLUS",pres:"Bote 15 ml",pvp:19},
+  {ean:"8436031735024",nombre:"ERGYDIGEST",pres:"250 ml",pvp:21},
+  {ean:"8436031735031",nombre:"ERGYDREN",pres:"250 ml",pvp:21},
+  {ean:"8436031735147",nombre:"ERGYEPUR",pres:"250 ml",pvp:21},
+  {ean:"8436031735192",nombre:"ERGY-FEM",pres:"250 ml",pvp:21},
+  {ean:"8436031737035",nombre:"ERGY-FEM Bienestar",pres:"60 cápsulas",pvp:27},
+  {ean:"8436031737042",nombre:"ERGY-FEM Equilibrio",pres:"60 cápsulas",pvp:27},
+  {ean:"8436031733280",nombre:"ERGYFERIL",pres:"60 cápsulas",pvp:21},
+  {ean:"8436031734263",nombre:"ERGYFIBRAL",pres:"12 cubos",pvp:16},
+  {ean:"8436031732115",nombre:"ERGYFLEX",pres:"30 Sobres",pvp:39},
+  {ean:"8436031731064",nombre:"ERGYFOSFORYL",pres:"Caja 60 perlas",pvp:32.5},
+  {ean:"8436031730937",nombre:"ERGY-IM",pres:"60 cápsulas",pvp:39.5},
+  {ean:"8436031739077",nombre:"ERGYKID Bienestar",pres:"150 ml",pvp:16},
+  {ean:"8436031739084",nombre:"ERGYKID Defens",pres:"150 ml",pvp:16},
+  {ean:"8436031739060",nombre:"ERGYKID Multivit",pres:"150 ml",pvp:16},
+  {ean:"8436031734249",nombre:"ERGYLASE Plus",pres:"40 cápsulas",pvp:21},
+  {ean:"8436031734225",nombre:"ERGYLIVER Complex",pres:"120 cápsulas",pvp:39.5},
+  {ean:"8436031735178",nombre:"ERGYLIXIR",pres:"250 ml",pvp:24},
+  {ean:"8436031733433",nombre:"ERGYMAG 90 cápsulas",pres:"90 cápsulas",pvp:21.5},
+  {ean:"8436031733440",nombre:"ERGYMAG 180 cápsulas",pres:"180 cápsulas",pvp:39.9},
+  {ean:"8436031735185",nombre:"ERGYMUNIL",pres:"250 ml",pvp:21},
+  {ean:"8436031733402",nombre:"ERGYNATAL",pres:"60 cápsulas",pvp:20.5},
+  {ean:"8436031736021",nombre:"ERGYNUTRIL Cacao",pres:"Bote 350 g",pvp:28},
+  {ean:"8436031736038",nombre:"ERGYNUTRIL Café",pres:"Bote 300 g",pvp:28},
+  {ean:"3401542421778",nombre:"ERGYNUTRIL Capuccino",pres:"Bote 300 g",pvp:28},
+  {ean:"8436031736045",nombre:"ERGYNUTRIL Vainilla",pres:"Bote 350 g",pvp:28},
+  {ean:"8436031735048",nombre:"ERGYOPTIM",pres:"250 ml",pvp:21},
+  {ean:"8436031733426",nombre:"ERGYOSEO K2",pres:"60 cápsulas",pvp:23},
+  {ean:"8436031734072",nombre:"ERGYPAINA Plus",pres:"60 cápsulas",pvp:26},
+  {ean:"8436031735154",nombre:"ERGYPAR",pres:"250 ml",pvp:21},
+  {ean:"8436031734232",nombre:"ERGYPHILUS ATB 30",pres:"30 cápsulas",pvp:14.9},
+  {ean:"8436031739053",nombre:"ERGYPHILUS Bebé",pres:"10 ml",pvp:18},
+  {ean:"8436031734096",nombre:"ERGYPHILUS Conf",pres:"60 cápsulas",pvp:24},
+  {ean:"8436031734256",nombre:"ERGYPHILUS HPy",pres:"60 cápsulas",pvp:24},
+  {ean:"8436031734270",nombre:"ERGYPHYLUS Inmuno Complex",pres:"60 cápsulas",pvp:24},
+  {ean:"8436031734195",nombre:"ERGYPHILUS Intima",pres:"60 cápsulas",pvp:24},
+  {ean:"8436031739022",nombre:"ERGYPHILUS Niños",pres:"14 Sobres",pvp:15.9},
+  {ean:"8436031734102",nombre:"ERGYPHILUS Plus",pres:"60 cápsulas",pvp:24},
+  {ean:"8436031734041",nombre:"ERGYPHILUS Plus 30",pres:"30 cápsulas",pvp:13},
+  {ean:"8436031735055",nombre:"ERGYPHYTUM",pres:"250 ml",pvp:21},
+  {ean:"8436031734171",nombre:"ERGYPROTECT CONF",pres:"60 cápsulas",pvp:19},
+  {ean:"8436031734188",nombre:"ERGYPROTECT PLUS",pres:"30 Sobres",pvp:20},
+  {ean:"8436031736281",nombre:"ERGYPROTEIN 100% natural",pres:"Bote 1 Kg",pvp:79},
+  {ean:"8436031732269",nombre:"ERGYQUER Forte",pres:"60 cápsulas",pvp:32.5},
+  {ean:"8436031732276",nombre:"ERGYREN Support",pres:"60 cápsulas",pvp:21},
+  {ean:"8436031730944",nombre:"ERGY-REG",pres:"60 cápsulas",pvp:39.5},
+  {ean:"3401545871723",nombre:"ERGYSIL GEL 75ml",pres:"75 ml (21% IVA)",pvp:14},
+  {ean:"3401544481282",nombre:"ERGYSIL Gel 200ml",pres:"200 ml (21% IVA)",pvp:25},
+  {ean:"8436031733242",nombre:"ERGYSIL SOLUCIÓN",pres:"500 ml",pvp:26},
+  {ean:"8436031734126",nombre:"ERGYSLIM",pres:"30 Sobres",pvp:25},
+  {ean:"8436031730548",nombre:"ERGYSPORT ESFUERZO",pres:"450 g",pvp:20},
+  {ean:"8436031730586",nombre:"ERGYSPORT OLIGOMAX",pres:"250 ml",pvp:20},
+  {ean:"8436031730517",nombre:"ERGYSPORT RECUP",pres:"60 cápsulas",pvp:20},
+  {ean:"8436031730531",nombre:"ERGYSPORT REGEN",pres:"450 g",pvp:26},
+  {ean:"8436031730524",nombre:"ERGYSPORT STIM",pres:"60 cápsulas",pvp:20},
+  {ean:"8436031733419",nombre:"ERGY'STAM",pres:"60 cápsulas",pvp:17.5},
+  {ean:"8436031733259",nombre:"ERGYSTRESS",pres:"60 cápsulas",pvp:24},
+  {ean:"8436031734218",nombre:"ERGYTAURINA Detox",pres:"60 cápsulas",pvp:21},
+  {ean:"8436031735130",nombre:"ERGYTONYL",pres:"250 ml",pvp:21},
+  {ean:"8436031732290",nombre:"ERGYUP",pres:"60 cápsulas",pvp:29.5},
+  {ean:"8436031735079",nombre:"ERGYVEN",pres:"250 ml",pvp:21},
+  {ean:"8436031733365",nombre:"ERGYVIOL",pres:"150 ml",pvp:18},
+  {ean:"8436031732177",nombre:"ERGYVITAL Hombre",pres:"60 cápsulas",pvp:26},
+  {ean:"8436031732252",nombre:"ERGYZEN",pres:"60 cápsulas",pvp:24},
+  {ean:"8436031738001",nombre:"GREEN'FLOR",pres:"90 comprimidos",pvp:32},
+  {ean:"8436031738018",nombre:"MY'COKYL",pres:"90 comprimidos",pvp:32},
+  {ean:"8436031738025",nombre:"NATURALKYL",pres:"90 perlas",pvp:32},
+  {ean:"8436031733310",nombre:"OLIGOVIOL A",pres:"150 ml.",pvp:18},
+  {ean:"8436031733334",nombre:"OLIGOVIOL B",pres:"150 ml.",pvp:18},
+  {ean:"8436031733297",nombre:"OLIGOVIOL C",pres:"150 ml.",pvp:18},
+  {ean:"8436031733303",nombre:"OLIGOVIOL H",pres:"150 ml.",pvp:18},
+  {ean:"8436031733341",nombre:"OLIGOVIOL I",pres:"150 ml.",pvp:18},
+  {ean:"8436031733327",nombre:"OLIGOVIOL N",pres:"150 ml.",pvp:18},
+  {ean:"8436031733358",nombre:"OLIGOVIOL O",pres:"150 ml.",pvp:18},
+  {ean:"8436031733372",nombre:"SUPRALFA",pres:"150 ml.",pvp:18},
+  {ean:"8436031735093",nombre:"SUPRAMINERAL DESMODIUM",pres:"250 ml",pvp:21},
+  {ean:"8436031731101",nombre:"SYNERVIOL 180 perlas",pres:"180 perlas",pvp:41.5},
+  {ean:"8436031731125",nombre:"SYNERVIOL 60",pres:"60 perlas",pvp:19},
+  {ean:"8436031736342",nombre:"VECTIDORM MELATONINA",pres:"60 cápsulas",pvp:17.5},
+  {ean:"8436031736359",nombre:"VECTIDORM GABA",pres:"60 cápsulas",pvp:17.5},
+  {ean:"8436031736243",nombre:"VECTI-PUR",pres:"60 cápsulas",pvp:26},
+  {ean:"8436031736267",nombre:"VECTI-SEREN",pres:"60 cápsulas",pvp:24},
+  {ean:"8436031736052",nombre:"VEGENUTRIL Cacao",pres:"Bote 350 g",pvp:28},
+  {ean:"3401548626610",nombre:"VEGENUTRIL Café",pres:"Bote 300 g",pvp:28},
+  {ean:"8436031736304",nombre:"VEGENUTRIL CHOCOLATE",pres:"Bote 300 g",pvp:28},
+  {ean:"8436031736069",nombre:"VEGENUTRIL POSTRE VAINILLA",pres:"Bote 350 g",pvp:28},
+];
+
+const f = (n) => Number(n).toFixed(2).replace(".",",") + " €";
+const p = (n) => Number(n).toFixed(1).replace(".",",") + "%";
+
+const TABS = [
+  {id:"simulador", label:"Simulador"},
+  {id:"argumento", label:"Argumento"},
+  {id:"informe",   label:"Informe"},
+  {id:"ajustes",   label:"Ajustes"},
+];
+
+function App() {
+  // Ajustes
+  const [pvlPct, setPvlPct]           = useState(20);
+  const [t1e, setT1e]                 = useState(50);
+  const [t1d, setT1d]                 = useState(34);
+  const [t2e, setT2e]                 = useState(120);
+  const [t2d, setT2d]                 = useState(36);
+  const [rappelE, setRappelE]         = useState(500);
+  const [rappelP, setRappelP]         = useState(2);
+
+  // Nav
+  const [tab, setTab]                 = useState("simulador");
+
+  // Producto
+  const [search, setSearch]           = useState("");
+  const [open, setOpen]               = useState(false);
+  const [prod, setProd]               = useState(PRODUCTOS[84]);
+  const dropRef                       = useRef(null);
+
+  // Simulador
+  const [descLineal, setDescLineal]   = useState(34);
+  const [pvlComp, setPvlComp]         = useState(+(PRODUCTOS[84].pvp * 0.8).toFixed(2));
+  const [descDto, setDescDto]         = useState(10);
+  const [tieneOferta, setTieneOferta] = useState(false);
+  const [compra, setCompra]           = useState(10);
+  const [regalo, setRegalo]           = useState(1);
+
+  // Cierra dropdown al pulsar fuera
+  useEffect(() => {
+    const fn = (e) => { if (dropRef.current && !dropRef.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", fn);
+    return () => document.removeEventListener("mousedown", fn);
+  }, []);
+
+  const selectProd = (p) => {
+    setProd(p);
+    setPvlComp(+(p.pvp * (1 - pvlPct/100)).toFixed(2));
+    setSearch(""); setOpen(false);
+  };
+
+  const filtered = PRODUCTOS.filter(p => p.nombre.toLowerCase().includes(search.toLowerCase()));
+  const lista    = search ? filtered : PRODUCTOS;
+
+  const calc = useMemo(() => {
+    const pvp       = prod.pvp;
+    const neto      = pvp * (1 - descLineal/100);
+    const dtoPvp    = ((pvp - pvlComp) / pvp) * 100;
+    const tras      = pvlComp * (1 - descDto/100);
+    const totalUds  = tieneOferta ? compra + regalo : compra;
+    const netoComp  = tieneOferta
+      ? (compra > 0 ? (tras * compra) / totalUds : tras)
+      : tras;
+    const gana      = netoComp < neto;
+    const dif       = netoComp - neto;
+    const margen    = ((pvp - neto) / pvp) * 100;
+    const conRappel = neto * (1 - rappelP/100);
+    return { neto, dtoPvp, netoComp, gana, dif, margen, conRappel };
+  }, [prod, descLineal, pvlComp, descDto, tieneOferta, compra, regalo, rappelP]);
+
+  const exportCSV = () => {
+    const rows = [
+      ["SIMULACIÓN DE RENTABILIDAD — NO OFICIAL"],
+      ["Generado con IA · Solo orientativo"],
+      ["Fecha:", new Date().toLocaleDateString("es-ES")],
+      [],
+      ["Producto:", prod.nombre, prod.pres],
+      ["EAN:", prod.ean],
+      ["PVP:", prod.pvp],
+      [],
+      ["CONCEPTO","MI PROPUESTA","COMPETENCIA (estimación)"],
+      ["Precio base","PVP: "+f(prod.pvp),"PVL: "+f(pvlComp)],
+      ["Descuento s/PVP","-"+p(descLineal)+" lineal","-"+p(calc.dtoPvp)+" s/PVP"],
+      ["Dto. comercial adicional","Ninguno (sin mínimos)",p(descDto)+" s/PVL"],
+      ["Bonificación","No aplica", tieneOferta ? compra+"+"+regalo+" uds." : "No aplica"],
+      ["COSTE NETO / UNIDAD", f(calc.neto), f(calc.netoComp)],
+      [],
+      ["Rápel anual orientativo:", "A partir de "+rappelE+"€/año → +"+rappelP+"%"],
+      ["Neto estimado con rápel:", f(calc.conRappel)],
+      [],
+      ["AVISO: Simulación IA. Datos competencia son estimaciones. No es oferta oficial."],
+    ];
+    const csv = rows.map(r=>r.map(c=>`"${c??''}"`).join(",")).join("\n");
+    const b   = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+    const u   = URL.createObjectURL(b);
+    const a   = document.createElement("a");
+    a.href=u; a.download=`Simulacion_${prod.nombre.replace(/\s/g,"_")}.csv`; a.click();
+    URL.revokeObjectURL(u);
+  };
+
+  // ── Estilos inline reutilizables ──
+  const card   = {background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:12,padding:"14px 16px"};
+  const badge  = (col) => ({background:col,color:"#fff",fontSize:10,fontWeight:900,padding:"2px 10px",borderRadius:20,textTransform:"uppercase",display:"inline-block"});
+  const btn    = (col,hover) => ({background:col,color:"#fff",border:"none",borderRadius:12,padding:"13px 0",fontWeight:900,fontSize:13,letterSpacing:1,textTransform:"uppercase",cursor:"pointer",width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:6});
+
+  return (
+    <div style={{minHeight:"100vh",background:"#f1f5f9",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"}}>
+
+      {/* ── CABECERA ── */}
+      <div className="no-print" style={{background:"#0f172a",color:"#fff",padding:"16px 16px 0"}}>
+        <div style={{maxWidth:800,margin:"0 auto"}}>
+
+          {/* Título */}
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+            <span style={{fontSize:18}}>📊</span>
+            <span style={{fontWeight:900,fontSize:15,letterSpacing:-.3}}>Comparativa de Rentabilidad · Nutergia 2026</span>
+          </div>
+
+          {/* Buscador + dropdown */}
+          <div ref={dropRef} style={{position:"relative",marginBottom:8}}>
+            <div style={{display:"flex",gap:8}}>
+              <div style={{position:"relative",flex:1}}>
+                <span style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"#94a3b8"}}>🔍</span>
+                <input
+                  type="text" placeholder="Buscar producto..."
+                  value={search}
+                  onChange={e=>{setSearch(e.target.value);setOpen(true);}}
+                  onFocus={()=>setOpen(true)}
+                  style={{width:"100%",padding:"9px 10px 9px 32px",background:"#1e293b",border:"1px solid #334155",borderRadius:10,color:"#fff",fontSize:14,outline:"none"}}
+                />
+              </div>
+              <button
+                onClick={()=>{setSearch("");setOpen(!open);}}
+                style={{background:"#1e293b",border:"1px solid #334155",borderRadius:10,color:"#fff",padding:"0 14px",fontSize:18,cursor:"pointer"}}
+              >▾</button>
+            </div>
+
+            {open && (
+              <div className="dropdown-scroll" style={{position:"absolute",zIndex:999,width:"100%",marginTop:4,background:"#fff",border:"1px solid #e2e8f0",borderRadius:12,boxShadow:"0 8px 32px rgba(0,0,0,.18)"}}>
+                {lista.length===0
+                  ? <div style={{padding:"12px 14px",fontSize:13,color:"#94a3b8"}}>Sin resultados</div>
+                  : lista.map(p=>(
+                    <div key={p.ean}
+                      onClick={()=>selectProd(p)}
+                      style={{padding:"10px 14px",borderBottom:"1px solid #f1f5f9",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}
+                      onMouseEnter={e=>e.currentTarget.style.background="#eff6ff"}
+                      onMouseLeave={e=>e.currentTarget.style.background=""}
+                    >
+                      <div>
+                        <div style={{fontWeight:700,fontSize:13,color:"#1e293b"}}>{p.nombre}</div>
+                        <div style={{fontSize:11,color:"#94a3b8"}}>{p.pres}</div>
+                      </div>
+                      <span style={{fontWeight:900,color:"#2563eb",fontSize:13,marginLeft:8,flexShrink:0}}>{f(p.pvp)}</span>
+                    </div>
+                  ))
+                }
+              </div>
+            )}
+          </div>
+
+          {/* Producto seleccionado */}
+          <div style={{background:"#1e293b",border:"1px solid #334155",borderRadius:10,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+            <div>
+              <span style={{fontWeight:900,fontSize:14,color:"#fff"}}>{prod.nombre}</span>
+              <span style={{fontSize:11,color:"#64748b",marginLeft:8}}>{prod.pres}</span>
+            </div>
+            <span style={{fontWeight:900,color:"#60a5fa",fontSize:14,flexShrink:0,marginLeft:8}}>{f(prod.pvp)} <span style={{fontSize:10,fontWeight:400,color:"#475569"}}>PVP</span></span>
+          </div>
+
+          {/* Tabs — selector móvil / fila tablet */}
+          <div className="tab-mobile" style={{display:"block"}}>
+            <style>{`
+              @media(min-width:600px){.tab-mobile{display:none!important;}.tab-desktop{display:flex!important;}}
+              @media(max-width:599px){.tab-desktop{display:none!important;}}
+            `}</style>
+            <select
+              value={tab} onChange={e=>setTab(e.target.value)}
+              style={{width:"100%",background:"#1e293b",border:"1px solid #334155",borderRadius:10,color:"#fff",padding:"10px 14px",fontSize:14,fontWeight:700,marginBottom:0,outline:"none"}}
+            >
+              {TABS.map(t=><option key={t.id} value={t.id}>{t.label}</option>)}
+            </select>
+          </div>
+          <div className="tab-desktop" style={{display:"none",gap:8,paddingBottom:0}}>
+            {TABS.map(t=>(
+              <button key={t.id} onClick={()=>setTab(t.id)}
+                style={{padding:"10px 18px",borderRadius:"10px 10px 0 0",border:"none",fontWeight:700,fontSize:13,cursor:"pointer",
+                  background: tab===t.id ? "#fff" : "#1e293b",
+                  color:      tab===t.id ? "#1e293b" : "#94a3b8",
+                }}
+              >{t.label}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── CONTENIDO ── */}
+      <div style={{maxWidth:800,margin:"0 auto",background:"#fff",minHeight:"80vh",padding:"20px 16px 32px"}} className="print-wrap"
+        onClick={()=>{ if(open) setOpen(false); }}
+      >
+
+        {/* ══ SIMULADOR ══ */}
+        {tab==="simulador" && (
+          <div style={{display:"flex",flexDirection:"column",gap:20}}>
+
+            {/* Aviso competencia gana — SOLO PARA FRANCIS */}
+            {calc.gana && (
+              <div className="no-print" style={{background:"#fef2f2",border:"1.5px solid #fca5a5",borderRadius:12,padding:"10px 14px",display:"flex",gap:8,alignItems:"flex-start"}}>
+                <span style={{fontSize:16,flexShrink:0}}>⚠️</span>
+                <span style={{fontSize:12,fontWeight:700,color:"#b91c1c"}}>
+                  Con estas condiciones la competencia queda en {f(calc.netoComp)}, por debajo de tu precio neto ({f(calc.neto)}). Ajusta los parámetros.
+                </span>
+              </div>
+            )}
+
+            {/* MI DESCUENTO */}
+            <div>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:8}}>
+                <span style={{fontWeight:900,fontSize:13,color:"#1d4ed8",textTransform:"uppercase",letterSpacing:.5}}>Mi descuento lineal s/PVP</span>
+                <span style={{fontWeight:900,fontSize:36,color:"#2563eb"}}>{descLineal}%</span>
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
+                <span style={{fontSize:11,fontWeight:700,color:"#2563eb",width:52,textAlign:"right",flexShrink:0}}>{f(calc.neto)}</span>
+                <input type="range" min="20" max="55" step="1" value={descLineal}
+                  onChange={e=>setDescLineal(+e.target.value)}
+                  style={{flex:1,accentColor:"#2563eb"}}
+                />
+                <span style={{fontSize:11,fontWeight:700,color:"#94a3b8",width:52,flexShrink:0}}>{f(prod.pvp)}</span>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:10,color:"#94a3b8",padding:"0 62px",marginBottom:10}}>
+                <span>← neto</span><span>PVP →</span>
+              </div>
+              <div style={{background:"#2563eb",color:"#fff",borderRadius:16,padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div>
+                  <div style={{fontSize:10,opacity:.7,textTransform:"uppercase",letterSpacing:1}}>Precio neto unitario</div>
+                  <div style={{fontSize:32,fontWeight:900,marginTop:2}}>{f(calc.neto)}</div>
+                </div>
+                <div style={{textAlign:"right",fontSize:11,opacity:.7,lineHeight:1.8}}>
+                  <div>Sin mínimos</div>
+                  <div>desde {t1e}€ → {t1d}%</div>
+                  <div>desde {t2e}€ → {t2d}%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* COMPETENCIA */}
+            <div>
+              <div style={{fontWeight:900,fontSize:13,color:"#b45309",textTransform:"uppercase",letterSpacing:.5,marginBottom:10}}>Competencia — su idioma</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+                <div style={card}>
+                  <div style={{fontSize:10,fontWeight:700,color:"#94a3b8",textTransform:"uppercase",marginBottom:4}}>PVL Competencia</div>
+                  <input type="number" step="0.01" value={pvlComp}
+                    onChange={e=>setPvlComp(parseFloat(e.target.value)||0)}
+                    style={{fontSize:20,fontWeight:900,width:"100%",border:"none",background:"transparent",outline:"none",color:"#1e293b"}}
+                  />
+                  <div style={{fontSize:11,fontWeight:700,color:"#d97706",marginTop:4}}>= -{p(calc.dtoPvp)} s/PVP</div>
+                </div>
+                <div style={card}>
+                  <div style={{fontSize:10,fontWeight:700,color:"#94a3b8",textTransform:"uppercase",marginBottom:4}}>Dto. comercial s/PVL</div>
+                  <div style={{display:"flex",alignItems:"center",gap:4}}>
+                    <input type="number" step="1" value={descDto}
+                      onChange={e=>setDescDto(parseFloat(e.target.value)||0)}
+                      style={{fontSize:20,fontWeight:900,width:"100%",border:"none",background:"transparent",outline:"none",color:"#1e293b"}}
+                    />
+                    <span style={{fontWeight:700,fontSize:18,color:"#64748b"}}>%</span>
+                  </div>
+                  <div style={{fontSize:11,color:"#94a3b8",marginTop:4}}>sobre el PVL</div>
+                </div>
+              </div>
+
+              {/* CHECKBOX C+R */}
+              <div style={{...card,marginBottom:10}}>
+                <label style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}}>
+                  <div style={{position:"relative",width:44,height:24,flexShrink:0}}>
+                    <input type="checkbox" checked={tieneOferta} onChange={e=>setTieneOferta(e.target.checked)}
+                      style={{opacity:0,width:0,height:0,position:"absolute"}}
+                    />
+                    <div style={{position:"absolute",inset:0,borderRadius:12,background:tieneOferta?"#2563eb":"#cbd5e1",transition:"background .2s"}}></div>
+                    <div style={{position:"absolute",top:3,left:tieneOferta?22:3,width:18,height:18,borderRadius:"50%",background:"#fff",transition:"left .2s",boxShadow:"0 1px 4px rgba(0,0,0,.2)"}}></div>
+                  </div>
+                  <div>
+                    <div style={{fontWeight:700,fontSize:13,color:"#1e293b"}}>¿Hacen oferta C+R?</div>
+                    <div style={{fontSize:11,color:"#94a3b8"}}>Compra + regalo (bonificación)</div>
+                  </div>
+                </label>
+                {tieneOferta && (
+                  <div style={{marginTop:12,display:"flex",alignItems:"center",gap:10,paddingTop:12,borderTop:"1px solid #e2e8f0"}}>
+                    <span style={{fontSize:12,color:"#64748b",fontWeight:600}}>Compra</span>
+                    <input type="number" value={compra} min="1"
+                      onChange={e=>setCompra(parseInt(e.target.value)||1)}
+                      style={{width:52,padding:"6px 8px",border:"1.5px solid #e2e8f0",borderRadius:8,textAlign:"center",fontWeight:900,fontSize:15,outline:"none"}}
+                    />
+                    <span style={{fontWeight:700,color:"#94a3b8",fontSize:16}}>+</span>
+                    <input type="number" value={regalo} min="0"
+                      onChange={e=>setRegalo(parseInt(e.target.value)||0)}
+                      style={{width:52,padding:"6px 8px",border:"1.5px solid #fbbf24",borderRadius:8,textAlign:"center",fontWeight:900,fontSize:15,color:"#b45309",background:"#fffbeb",outline:"none"}}
+                    />
+                    <span style={{fontSize:12,color:"#64748b",fontWeight:600}}>regalo</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Resultado competencia */}
+              <div style={{background:calc.gana?"#fef2f2":"#fffbeb",border:`1.5px solid ${calc.gana?"#fca5a5":"#fcd34d"}`,borderRadius:16,padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div>
+                  <div style={{fontSize:10,fontWeight:700,color:"#b45309",textTransform:"uppercase",letterSpacing:.5}}>Neto efectivo competencia</div>
+                  <div style={{fontSize:28,fontWeight:900,color:calc.gana?"#b91c1c":"#92400e",marginTop:2}}>{f(calc.netoComp)}</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:11,color:"#94a3b8"}}>diferencia</div>
+                  <div style={{fontSize:18,fontWeight:900,color:calc.dif>0?"#16a34a":"#dc2626"}}>{calc.dif>0?"+":""}{f(calc.dif)}</div>
+                  <div style={{fontSize:11,color:"#94a3b8"}}>{calc.dif>0?"✓ gano yo":"⚠ gana ellos"}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* RÁPEL sutil */}
+            <div style={{border:"1.5px dashed #e2e8f0",borderRadius:12,padding:"10px 14px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span style={{fontSize:11,color:"#94a3b8",fontWeight:700,textTransform:"uppercase",letterSpacing:.5}}>Rápel anual (orientativo)</span>
+                <span style={{fontSize:12,color:"#64748b"}}>a partir de {rappelE}€/año → <strong style={{color:"#15803d"}}>+{rappelP}%</strong></span>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:12,color:"#64748b"}}>
+                <span>Neto con rápel incluido:</span>
+                <strong style={{color:"#15803d"}}>{f(calc.conRappel)}</strong>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ══ ARGUMENTO COMERCIAL ══ */}
+        {tab==="argumento" && (
+          <div style={{display:"flex",flexDirection:"column",gap:16}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:14,borderBottom:"2px solid #e2e8f0"}}>
+              <div>
+                <div style={{fontWeight:900,fontSize:18,color:"#0f172a"}}>Argumento de Rentabilidad</div>
+                <div style={{fontWeight:700,fontSize:13,color:"#2563eb",marginTop:2}}>{prod.nombre} · PVP {f(prod.pvp)}</div>
+              </div>
+              <div style={{textAlign:"right",flexShrink:0,marginLeft:12}}>
+                <span style={badge("#2563eb")}>Nutergia 2026</span>
+                <div style={{fontSize:11,color:"#94a3b8",marginTop:4}}>{new Date().toLocaleDateString("es-ES")}</div>
+              </div>
+            </div>
+
+            {/* Barra visual */}
+            <div style={{background:"#2563eb",color:"#fff",borderRadius:16,padding:"16px 20px"}}>
+              <div style={{fontSize:10,textTransform:"uppercase",letterSpacing:1,opacity:.7,marginBottom:8}}>Mi propuesta — descuento lineal s/PVP</div>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:13,fontWeight:700,opacity:.85,marginBottom:6}}>
+                <span>{f(calc.neto)}</span>
+                <span style={{fontSize:24,fontWeight:900,color:"#fff"}}>{descLineal}%</span>
+                <span>{f(prod.pvp)}</span>
+              </div>
+              <div style={{position:"relative",height:14,background:"rgba(255,255,255,.25)",borderRadius:7,overflow:"hidden"}}>
+                <div style={{position:"absolute",left:0,top:0,height:"100%",borderRadius:7,background:"#fff",width:`${descLineal}%`,transition:"width .3s"}}></div>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:10,opacity:.6,marginTop:4}}>
+                <span>← precio neto</span><span>PVP →</span>
+              </div>
+            </div>
+
+            {/* Texto */}
+            <div style={{...card,lineHeight:1.7,fontSize:13,color:"#374151",display:"flex",flexDirection:"column",gap:10}}>
+              <p>El margen estándar que los laboratorios conceden a la farmacia en España —el <strong>PVL</strong>— se sitúa habitualmente en torno al <strong>28% sobre el PVP</strong>. Sobre ese PVL, la competencia añade descuentos comerciales y bonificaciones para resultar competitiva.</p>
+              <p>Mi propuesta aplica directamente <strong>{descLineal}% sobre el PVP desde el primer pedido</strong> — {(descLineal-28).toFixed(0)} puntos por encima del margen estándar, sin negociar unidades mínimas ni cajas.</p>
+            </div>
+
+            {/* Sin mínimos */}
+            <div style={{background:"#f0fdf4",border:"1.5px solid #bbf7d0",borderRadius:12,padding:"12px 16px"}}>
+              <div style={{fontWeight:900,fontSize:13,color:"#15803d",marginBottom:8}}>✓ Sin mínimos de compra</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                {[[t1e,t1d],[t2e,t2d]].map(([e,d],i)=>(
+                  <div key={i} style={{background:"#fff",border:"1px solid #dcfce7",borderRadius:10,padding:"10px",textAlign:"center"}}>
+                    <div style={{fontSize:24,fontWeight:900,color:"#2563eb"}}>{d}%</div>
+                    <div style={{fontSize:11,color:"#64748b",marginTop:2}}>desde <strong>{e}€</strong></div>
+                  </div>
+                ))}
+              </div>
+              <div style={{fontSize:11,color:"#15803d",marginTop:8}}>Sin contar por cajas, ni unidades, ni referencias mínimas.</div>
+            </div>
+
+            {/* Tabla comparativa */}
+            <div style={{overflowX:"auto"}}>
+              <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+                <thead>
+                  <tr style={{background:"#0f172a",color:"#fff"}}>
+                    {["Escenario","Dto s/PVP","Precio neto"].map((h,i)=>(
+                      <th key={i} style={{padding:"10px 12px",textAlign:i===0?"left":"center",fontWeight:700}}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    {label:"Mi propuesta", sub:"", dto:descLineal, neto:calc.neto, highlight:true},
+                    {label:"Comp. solo PVL", sub:"(28% s/PVP)", dto:28, neto:prod.pvp*0.72},
+                    {label:"Comp. PVL + 10%", sub:"", dto:null, label2:"-28% +10%", neto:prod.pvp*0.72*0.9},
+                    {label:"Comp. PVL + 10% + 10+1", sub:"", dto:null, label2:"-28%+10%+bono", neto:prod.pvp*0.72*0.9*10/11},
+                  ].map((r,i)=>(
+                    <tr key={i} style={{background:r.highlight?"#eff6ff":"#fff",borderBottom:"1px solid #f1f5f9"}}>
+                      <td style={{padding:"10px 12px",fontWeight:r.highlight?900:400,color:r.highlight?"#1d4ed8":"#374151"}}>{r.label} <span style={{fontSize:10,color:"#94a3b8"}}>{r.sub}</span></td>
+                      <td style={{padding:"10px 12px",textAlign:"center",fontWeight:r.highlight?900:400,color:r.highlight?"#2563eb":"#64748b"}}>{r.dto!=null?`-${p(r.dto)}`:r.label2}</td>
+                      <td style={{padding:"10px 12px",textAlign:"center",fontWeight:r.highlight?900:700,fontSize:r.highlight?15:13,color:r.highlight?"#1d4ed8":"#374151"}}>{f(r.neto)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Rápel */}
+            <div style={{...card,fontSize:12,color:"#374151"}}>
+              <strong>+ Rápel anual:</strong> superando <strong>{rappelE}€</strong> en compras anuales, {rappelP}% adicional acumulable. Precio estimado con rápel: <strong style={{color:"#15803d"}}>{f(calc.conRappel)}</strong>.
+            </div>
+
+            <div style={{background:"#f8fafc",borderLeft:"4px solid #cbd5e1",borderRadius:"0 8px 8px 0",padding:"10px 14px",display:"flex",gap:8,alignItems:"flex-start"}}>
+              <span style={{fontSize:14,flexShrink:0}}>⚠️</span>
+              <span style={{fontSize:11,color:"#64748b"}}><strong>Simulación orientativa generada con IA.</strong> Datos de mercado basados en estándares del sector. No es oferta vinculante.</span>
+            </div>
+
+            <button className="no-print" style={btn("#0f172a")} onClick={()=>window.print()}>
+              ⬇ Imprimir / Guardar PDF
+            </button>
+          </div>
+        )}
+
+        {/* ══ INFORME CLIENTE ══ */}
+        {tab==="informe" && (
+          <div>
+            <div style={{border:"2px solid #e2e8f0",borderRadius:16,padding:"16px",marginBottom:16}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:12,borderBottom:"1px solid #e2e8f0",marginBottom:14}}>
+                <div>
+                  <div style={{fontWeight:900,fontSize:16,color:"#0f172a",textTransform:"uppercase"}}>Propuesta Comercial</div>
+                  <div style={{fontWeight:700,fontSize:13,color:"#2563eb",marginTop:2}}>{prod.nombre}</div>
+                  <div style={{fontSize:11,color:"#94a3b8"}}>{prod.pres} · EAN {prod.ean}</div>
+                </div>
+                <div style={{textAlign:"right",flexShrink:0,marginLeft:12}}>
+                  <span style={badge("#ef4444")}>⚠ No Oficial</span>
+                  <div style={{fontSize:11,color:"#ea580c",fontWeight:700,marginTop:4}}>Simulación IA</div>
+                  <div style={{fontSize:11,color:"#94a3b8"}}>{new Date().toLocaleDateString("es-ES")}</div>
+                </div>
+              </div>
+
+              <div style={{overflowX:"auto"}}>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+                  <thead>
+                    <tr style={{background:"#0f172a",color:"#fff"}}>
+                      {["Concepto","Mi propuesta","Competencia (est.)"].map((h,i)=>(
+                        <th key={i} style={{padding:"10px 12px",textAlign:i===0?"left":"center",fontWeight:700}}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{background:"#f8fafc",borderBottom:"1px solid #f1f5f9"}}>
+                      <td style={{padding:"10px 12px",fontWeight:700,fontSize:11,color:"#64748b",textTransform:"uppercase"}}>Precio base (PVL)</td>
+                      <td style={{padding:"10px 12px",textAlign:"center",fontSize:11,color:"#64748b"}}>Equiv.: <strong style={{color:"#374151"}}>{f(calc.neto)}</strong></td>
+                      <td style={{padding:"10px 12px",textAlign:"center",fontWeight:700,color:"#b45309"}}>{f(pvlComp)}</td>
+                    </tr>
+                    <tr style={{borderBottom:"1px solid #f1f5f9"}}>
+                      <td style={{padding:"10px 12px",fontWeight:700,fontSize:11,color:"#64748b",textTransform:"uppercase"}}>Dto. s/PVP equivalente</td>
+                      <td style={{padding:"10px 12px",textAlign:"center",fontWeight:900,color:"#2563eb",fontSize:16}}>-{p(descLineal)}</td>
+                      <td style={{padding:"10px 12px",textAlign:"center",fontWeight:700,color:"#b45309"}}>-{p(calc.dtoPvp)}</td>
+                    </tr>
+                    <tr style={{background:"#f8fafc",borderBottom:"1px solid #f1f5f9"}}>
+                      <td style={{padding:"10px 12px",fontWeight:700,fontSize:11,color:"#64748b",textTransform:"uppercase"}}>Dto. comercial adicional</td>
+                      <td style={{padding:"10px 12px",textAlign:"center",fontSize:11,color:"#94a3b8"}}>Ninguno<br/>(precio directo)</td>
+                      <td style={{padding:"10px 12px",textAlign:"center"}}>{p(descDto)} s/PVL</td>
+                    </tr>
+                    <tr style={{borderBottom:"2px solid #e2e8f0"}}>
+                      <td style={{padding:"10px 12px",fontWeight:700,fontSize:11,color:"#64748b",textTransform:"uppercase"}}>Bonificación</td>
+                      <td style={{padding:"10px 12px",textAlign:"center",fontSize:11,color:"#94a3b8"}}>Sin mínimos</td>
+                      <td style={{padding:"10px 12px",textAlign:"center"}}>{tieneOferta ? `${compra}+${regalo} uds.` : "No aplica"}</td>
+                    </tr>
+                    <tr style={{background:"#eff6ff"}}>
+                      <td style={{padding:"13px 12px",fontWeight:900,fontSize:11,textTransform:"uppercase",color:"#1e293b"}}>Coste neto / unidad</td>
+                      <td style={{padding:"13px 12px",textAlign:"center",fontWeight:900,fontSize:24,color:"#1d4ed8"}}>{f(calc.neto)}</td>
+                      <td style={{padding:"13px 12px",textAlign:"center",fontWeight:700,fontSize:18,color:"#374151"}}>{f(calc.netoComp)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style={{background:"#0f172a",color:"#fff",borderRadius:12,padding:"14px 16px",margin:"14px 0",fontSize:13,lineHeight:1.6}}>
+                "Un <strong>{p(descLineal)} lineal desde el primer pedido</strong>, sin mínimos de unidades ni referencias. Para igualar este precio, la competencia necesitaría combinar su tarifa base con descuentos adicionales del <strong>{p(100-(calc.neto/(prod.pvp*0.72))*100)}</strong>."
+              </div>
+
+              <div style={{fontSize:11,color:"#64748b",borderTop:"1px solid #f1f5f9",paddingTop:10}}>
+                <strong style={{color:"#374151"}}>Rápel anual orientativo:</strong> a partir de {rappelE}€ anuales, +{rappelP}% adicional acumulable sobre el descuento vigente.
+              </div>
+
+              <div style={{background:"#fef2f2",border:"2px solid #fecaca",borderRadius:12,padding:"12px 14px",marginTop:14,display:"flex",gap:8,alignItems:"flex-start"}}>
+                <span style={{fontSize:15,flexShrink:0}}>⚠️</span>
+                <p style={{fontSize:11,color:"#b91c1c",lineHeight:1.6}}>
+                  <strong>DOCUMENTO NO OFICIAL — SIMULACIÓN IA:</strong> Herramienta informativa generada con Inteligencia Artificial. Los datos de la competencia son estimaciones del usuario. No constituye oferta vinculante de Nutergia ni de ninguna otra empresa.
+                </p>
+              </div>
+            </div>
+
+            <div className="no-print" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+              <button style={btn("#0f172a")} onClick={()=>window.print()}>⬇ Guardar PDF</button>
+              <button style={btn("#15803d")} onClick={exportCSV}>📊 Exportar Excel</button>
+            </div>
+            <div className="no-print" style={{fontSize:11,color:"#94a3b8",textAlign:"center",marginTop:8}}>El CSV se abre directamente con Excel</div>
+          </div>
+        )}
+
+        {/* ══ AJUSTES ══ */}
+        {tab==="ajustes" && (
+          <div style={{display:"flex",flexDirection:"column",gap:20}}>
+            <div style={{fontWeight:900,fontSize:15,color:"#0f172a",textTransform:"uppercase",letterSpacing:.5}}>Configuración</div>
+
+            {/* PVL por defecto */}
+            <div style={card}>
+              <div style={{fontWeight:900,fontSize:13,color:"#374151",marginBottom:4}}>PVL de la competencia por defecto</div>
+              <div style={{fontSize:11,color:"#94a3b8",marginBottom:10}}>Al seleccionar un producto, el PVL de la competencia se calcula automáticamente con este descuento sobre el PVP.</div>
+              <div style={{display:"flex",alignItems:"center",gap:12}}>
+                <input type="range" min="10" max="40" step="1" value={pvlPct}
+                  onChange={e=>setPvlPct(+e.target.value)}
+                  style={{flex:1,accentColor:"#2563eb"}}
+                />
+                <span style={{fontWeight:900,fontSize:22,color:"#2563eb",width:50,textAlign:"right"}}>{pvlPct}%</span>
+              </div>
+            </div>
+
+            {/* Tramos */}
+            <div style={card}>
+              <div style={{fontWeight:900,fontSize:13,color:"#374151",marginBottom:4}}>Tramos de descuento propios</div>
+              <div style={{fontSize:11,color:"#94a3b8",marginBottom:12}}>Solo por importe total del pedido — sin mínimos de unidades.</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                {[
+                  {label:"Tramo 1 — desde (€)", val:t1e, set:setT1e},
+                  {label:"Dto. T1 (%)",          val:t1d, set:setT1d},
+                  {label:"Tramo 2 — desde (€)", val:t2e, set:setT2e},
+                  {label:"Dto. T2 (%)",          val:t2d, set:setT2d},
+                ].map((f,i)=>(
+                  <div key={i}>
+                    <div style={{fontSize:10,fontWeight:700,color:"#94a3b8",textTransform:"uppercase",marginBottom:4}}>{f.label}</div>
+                    <input type="number" value={f.val} onChange={e=>f.set(parseFloat(e.target.value)||0)}
+                      style={{width:"100%",border:"1.5px solid #e2e8f0",borderRadius:8,padding:"8px 10px",fontSize:18,fontWeight:900,outline:"none",color:"#1e293b"}}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Rápel */}
+            <div style={card}>
+              <div style={{fontWeight:900,fontSize:13,color:"#374151",marginBottom:4}}>Rápel anual</div>
+              <div style={{fontSize:11,color:"#94a3b8",marginBottom:12}}>Acumulable al descuento vigente. Aparece de forma sutil en simulador e informe.</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                {[
+                  {label:"A partir de (€/año)", val:rappelE, set:setRappelE, step:50},
+                  {label:"% Rápel",             val:rappelP, set:setRappelP, step:0.5},
+                ].map((f,i)=>(
+                  <div key={i}>
+                    <div style={{fontSize:10,fontWeight:700,color:"#94a3b8",textTransform:"uppercase",marginBottom:4}}>{f.label}</div>
+                    <input type="number" step={f.step} value={f.val} onChange={e=>f.set(parseFloat(e.target.value)||0)}
+                      style={{width:"100%",border:"1.5px solid #e2e8f0",borderRadius:8,padding:"8px 10px",fontSize:18,fontWeight:900,outline:"none",color:"#1e293b"}}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:8,padding:10,marginTop:10,fontSize:12,color:"#374151"}}>
+                <strong>Ejemplo:</strong> {t1d}% base + {rappelP}% rápel = <strong style={{color:"#15803d"}}>{(t1d+rappelP).toFixed(1)}% efectivo</strong> al cierre del año.
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
