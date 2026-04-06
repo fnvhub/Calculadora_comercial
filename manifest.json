@@ -5,18 +5,20 @@
   "start_url": "/Calculadora_comercial/",
   "scope": "/Calculadora_comercial/",
   "display": "standalone",
-  "background_color": "#f1f5f9",
-  "theme_color": "#2563eb",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "https://fnvhub.github.io/hub/icon-192.png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj4KICA8cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjM4IiBmaWxsPSIjMGYxNzJhIi8+CiAgPHJlY3QgeD0iMjQiIHk9IjExMCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjU4IiByeD0iNiIgZmlsbD0iIzI1NjNlYiIvPgogIDxyZWN0IHg9IjY0IiB5PSI4MCIgd2lkdGg9IjI4IiBoZWlnaHQ9Ijg4IiByeD0iNiIgZmlsbD0iIzNiODJmNiIvPgogIDxyZWN0IHg9IjEwNCIgeT0iNTIiIHdpZHRoPSIyOCIgaGVpZ2h0PSIxMTYiIHJ4PSI2IiBmaWxsPSIjNjBhNWZhIi8+CiAgPHJlY3QgeD0iMTQ0IiB5PSIyOCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjE0MCIgcng9IjYiIGZpbGw9IiM5M2M1ZmQiLz4KPC9zdmc+",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     },
     {
-      "src": "https://fnvhub.github.io/hub/icon-512.png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjEwMCIgZmlsbD0iIzBmMTcyYSIvPgogIDxyZWN0IHg9IjY0IiB5PSIyOTIiIHdpZHRoPSI3NiIgaGVpZ2h0PSIxNTYiIHJ4PSIxNiIgZmlsbD0iIzI1NjNlYiIvPgogIDxyZWN0IHg9IjE3MiIgeT0iMjEyIiB3aWR0aD0iNzYiIGhlaWdodD0iMjM2IiByeD0iMTYiIGZpbGw9IiMzYjgyZjYiLz4KICA8cmVjdCB4PSIyODAiIHk9IjEzNiIgd2lkdGg9Ijc2IiBoZWlnaHQ9IjMxMiIgcng9IjE2IiBmaWxsPSIjNjBhNWZhIi8+CiAgPHJlY3QgeD0iMzg4IiB5PSI3MiIgd2lkdGg9Ijc2IiBoZWlnaHQ9IjM3NiIgcng9IjE2IiBmaWxsPSIjOTNjNWZkIi8+Cjwvc3ZnPg==",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }
